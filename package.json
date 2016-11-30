@@ -6,6 +6,7 @@
   "keywords": [],
   "dependencies": {
     "cassandra-driver": "^3.1.6",
+    "class-validator": "^0.6.6",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",

@@ -21,4 +21,8 @@ module.exports = {
   //   connection: 'someMongodbServer'
   // }
 
+  cassandra: {
+    points: ['51.15.48.136']
+  }
+
 };

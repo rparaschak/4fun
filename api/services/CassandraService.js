@@ -1,10 +1,18 @@
 const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({contactPoints: sails.config.cassandra.points, keyspace: 'messenger'});
 
-function CassandraHelper(){
+module.exports = {
 
-	const client = new cassandra.Client({ contactPoints: ['51.15.48.136'], keyspace: 'messenger' });
+  getConnection: function () {},
 
-	this.getConnection = function(){
-
-	}
+  query: function(query, params, prepare){
+    return new Promise(function(resolve, reject){
+      client.execute(query, params, { prepare: prepare }, function(err, results){
+        if(err)
+          return reject(err);
+        if(results)
+          return resolve(results);
+      });
+    });
+  }
 }
