@@ -5,14 +5,15 @@ module.exports = {
 
   getConnection: function () {},
 
-  query: function(query, params, prepare){
+  execute: function(query, params, prepare = true){
     return new Promise(function(resolve, reject){
       client.execute(query, params, { prepare: prepare }, function(err, results){
         if(err)
           return reject(err);
         if(results)
-          return resolve(results);
+          return resolve(results.rows);
       });
     });
-  }
+  },
+
 }

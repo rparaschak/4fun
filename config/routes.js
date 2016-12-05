@@ -46,6 +46,14 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  'GET /test' : 'ChatRoomController.test'
+  'POST /test' : 'ChatRoomController.test',
+
+  'GET /testAuth' : 'UserController.testAuth',
+
+  //****** ChatRoom
+
+  'POST /chatroom': 'ChatRoomController.createChatRoom',
+
+  //****** ChatRoom
 
 };

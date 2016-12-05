@@ -11,12 +11,15 @@ module.exports = {
 	createChatRoom: function(req, res){
     if( !req.body.to )
       return res.status(400).send('To required.');
-    ChatRoomService.createRoom(req.body.to)
-      .then(function(room){
-        res.status(201).json(room);
+    ChatRoomService.createRoom(req.body, req.body.invitations )
+      .then(function(roomId){
+        return ChatRoomService.getChatRoomById(roomId);
+      })
+      .then(function(chatrooms){
+        res.status(201).json(chatrooms[0]);
       })
       .catch(function(err){
-        res.status(err.status).send(err.stack);
+        res.status(err.status || 500).send(err.stack);
       });
   },
 
@@ -37,16 +40,8 @@ module.exports = {
   // This method updates light user in every ChatRoom
   invalidateLightUser: function(){},
 
-  test: function(req, res){
-    ChatRoomService.createRoom()
-      .then(function(result){
-        console.log(result);
-        res.status(201).json(result);
-      })
-      .catch(function(err){
-        console.log(err);
-        res.status(err.status || 500).send(err);
-      });
+  test: function(req, res) {
+    console.log(req.body);
   }
 };
 

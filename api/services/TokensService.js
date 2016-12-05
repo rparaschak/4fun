@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken');
 
 var KEY = "ThisIsSpartaOlolo1488";
 var ALG = "HS256";
-var EXPIRES = "2 days";
+var EXPIRES = "999 days";
 
 module.exports = {
 

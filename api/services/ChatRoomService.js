@@ -2,13 +2,27 @@ const crypto = require('crypto');
 
 module.exports = {
 
-  createRoom: function(to){
+  createRoom: function(to, invitations){
     const createChatRoomQuery = 'INSERT INTO chatrooms(id, last_message, last_read, messages_count, owner, participants) ' +
-                                'VALUES(?, null, null, 0, ?, ?) ;'
-    return CassandraService.query(createChatRoomQuery, [this.generateChatId(), {username: 'blahblag'}, [ '123', '321']], true);
+                                'VALUES(?, ?, ?, 0, ?, ?) ;';
+
+    if(invitations)
+      invitations = invitations.split(',');
+
+    let roomId = this.generateRoomId();
+
+    return CassandraService.execute(createChatRoomQuery, [roomId, { message: 'last_message', user: 'bleablea' }, {username: '3'}, {username: 'rpa'},  invitations || []], true)
+      .then(function(){
+        return roomId;
+      });
   },
 
-  generateChatId: function(){
+  getChatRoomById: function(roomId){
+    const getChatRoomByIdQuery = 'SELECT * FROM chatrooms WHERE id = ?';
+    return CassandraService.execute(getChatRoomByIdQuery, [roomId], true);
+  },
+
+  generateRoomId: function(){
     return crypto.randomBytes(20).toString('hex');
   }
 };
