@@ -55,5 +55,9 @@ module.exports.policies = {
 
   ChatRoomController: {
     createChatRoom: ['fakeAuth']
+  },
+
+  MessageController: {
+    '*': 'fakeAuth'
   }
 };

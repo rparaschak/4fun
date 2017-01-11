@@ -1,13 +1,13 @@
 module.exports = {
 
   createMessage: function(message){
-    const createMessageQuery = "INSERT INTO messages(timeuuid, chat_room_id, from, message) " +
-      "VALUES (timeuuid(), ?, ?, ?)"; //TODO: Investigate if it is possible to retrieve inserted document
+    const createMessageQuery = "INSERT INTO messages(id, chat_room_id, user, message) " +
+      "VALUES (now(), ?, ?, ?)"; //TODO: Investigate if it is possible to retrieve inserted document
 
     return CassandraService.execute(createMessageQuery,
       [
         message.chatRoomId, //room id
-        message.form,
+        message.user,
         message.message
       ]
       ,true)
@@ -22,3 +22,14 @@ module.exports = {
   }
 
 };
+
+/*
+
+ CREATE TABLE messenger.messages (
+ chat_room_id timeuuid,
+ id timeuuid,
+ message text,
+ user text,
+ PRIMARY KEY (chat_room_id, id));
+
+ */

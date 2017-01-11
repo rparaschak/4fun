@@ -2,12 +2,12 @@ const crypto = require('crypto');
 
 module.exports = {
 
-  createRoom: function (user, to, participants) {
+  createRoom: function (user, to, participants = '') {
     const createChatRoomQuery = 'INSERT INTO chatrooms(id, last_message, last_read, messages_count, owner, participants) ' +
       'VALUES(?, ?, ?, 0, ?, ?) ;';
 
-    if (participants)
-      participants = participants.split(',').push(user.id);
+    participants = participants.split(',');
+    participants.push(user.id);
 
     let roomId = generateRoomId();
 
@@ -30,12 +30,14 @@ module.exports = {
     return CassandraService.execute(getChatRoomByIdQuery, [roomId], true)
       .then(function (chatRooms) {
         let chatRoom = chatRooms[0];
-        if (!chatRoom.participants.indexOf(user.id))
-          throw ExceptionHelper.ChatRoom.NotParticipant;
-        if(!chatRooms)
-          throw ExceptionHelper.ChatRoom.NotFound;
+        if (!chatRooms)
+          throw ExceptionsHelper.ChatRoom.NotFound;
         return chatRoom;
       });
+  },
+
+  checkIfUserIsParticipant: function (chatroom, userid) {
+    return (chatroom.participants.indexOf(userid) > -1);
   },
 
   getUserChatRooms: function (user) {
@@ -59,7 +61,7 @@ module.exports = {
     const removeParticipantQuery = "UPDATE chatrooms SET participants = ? WHERE id = ?"; //TODO
     return this.getChatRoomById(chatRoomId, user)
       .then(function (chatRoom) {
-        if(user.id != chatRoom.owner.id)
+        if (user.id != chatRoom.owner.id)
           throw ExceptionHelper.ChatRoom.NotOwner;
         let participants = chatRoom.participants.splice(chatRoom.participants.indexOf(participantToKick), 1);
         CassandraService.execute(removeParticipantQuery, [ //TODO: Handle error
@@ -69,7 +71,7 @@ module.exports = {
       })
   },
 
-  leaveChatRoom: function(chatRoomId, user){
+  leaveChatRoom: function (chatRoomId, user) {
     const removeParticipantQuery = "UPDATE chatrooms SET participants = ? WHERE id = ?"; //TODO
     return this.getChatRoomById(chatRoomId, user)
       .then(function (chatRoom) {
@@ -81,12 +83,15 @@ module.exports = {
       })
   },
 
-  updateLastMessage: function(chatRoomId, message){ //Consider using triggers
+  updateLastMessage: function (chatRoomId, message) { //Consider using triggers
     const updateLastMessageQuery = "UPDATE chatrooms SET last_message = ? WHERE id = ?";
+    message.id = message.id.toString();
+    console.log(message);
     return CassandraService.execute(updateLastMessageQuery, [ //TODO: Handle error
-      message,
-      chatRoomId
-    ], true);
+        message,
+        'f94fc926e3ac1cbd7bc13d44810b84599c4e11ee'//chatRoomId
+      ],
+      true);
   }
 
 };
@@ -104,18 +109,6 @@ function generateRoomId() {
  messages_count bigint,
  owner map<text, text>,
  participants set<text>
- ) WITH bloom_filter_fp_chance = 0.01
- AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
- AND comment = ''
- AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
- AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
- AND crc_check_chance = 1.0
- AND dclocal_read_repair_chance = 0.1
- AND default_time_to_live = 0
- AND gc_grace_seconds = 864000
- AND max_index_interval = 2048
- AND memtable_flush_period_in_ms = 0
- AND min_index_interval = 128
- AND read_repair_chance = 0.0
- AND speculative_retry = '99PERCENTILE';
- CREATE INDEX participants_index ON messenger.chatrooms (values(participants));*/
+ );
+
+ CREATE INDEX ON messenger.chatrooms(participants);*/

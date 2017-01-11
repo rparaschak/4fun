@@ -10,22 +10,30 @@ module.exports = {
 
     ChatRoomService.getChatRoomById(req.param('chatroomid'), req.user)
       .then(function (chatRoom) {
+        if(!chatRoom)
+          throw ExceptionsHelper.ChatRoom.NotFound;
+        if(!ChatRoomService.checkIfUserIsParticipant(chatRoom, req.user.id))
+          throw ExceptionsHelper.ChatRoom.NotParticipant;
         return MessageService.createMessage({
-          from: req.user.id,
-          message: req.body.message
+          user: req.user.id,
+          message: req.body.message,
+          chatRoomId: req.param('chatroomid')
         });
       })
       .then(function(){
-        return MessagesService.getLastMessage(req.param('chatroomid'));
+        return MessageService.getLastMessage(req.param('chatroomid'));
       })
       .then(function(message){
-        ChatRoomService.updateLastMessage(req.param('chatroomid'), message);
+        return ChatRoomService.updateLastMessage(req.param('chatroomid'), message);
       })
-      .catch(ExceptionHelper.shortCatch(res));
+      .then(function(){
+        res.status(201).send('ok');
+      })
+      .catch(ExceptionsHelper.shortCatch(res));
   },
 
   getMessages: function(req, res){
-    
+
   }
 };
 

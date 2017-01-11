@@ -6,7 +6,12 @@ module.exports = {
   Common: {
     NotAuthorized: {
       status: 403,
-      message: 'Not Authorized'
+      message: "Not Authorized"
+    },
+
+    BadRequest: {
+      status: 400,
+      message: "Some parameters either wrong or missing."
     }
   },
 
@@ -23,10 +28,18 @@ module.exports = {
       status: 403,
       message: "Not an owner."
     }
+  },
+
+  User: {
+    IdAlreadyExists: {
+      status: 409,
+      message: "User with the same id already exists in the database"
+    }
   }
 }
 
 function handleCatch(res, exception){
+  console.log(exception);
   res.status(exception.status || 500).send(exception.message || exception.stack);
 }
 

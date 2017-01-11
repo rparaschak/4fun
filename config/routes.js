@@ -48,7 +48,7 @@ module.exports.routes = {
 
   'POST /test' : 'ChatRoomController.test',
 
-  'GET /testAuth' : 'UserController.testAuth',
+  'GET /testAuth/:id' : 'UserController.testAuth',
 
   //****** ChatRoom
 
@@ -60,8 +60,20 @@ module.exports.routes = {
 
   'POST /chatroom/:chatroomid/leave': 'ChatRoomController.leaveChatRoom',
 
-  'POST /chatroom/:chatroomid/kick': 'ChatRoomController.kickParticipant'
+  'POST /chatroom/:chatroomid/kick': 'ChatRoomController.kickParticipant',
 
   //****** ChatRoom
+
+  //****** User
+
+  'POST /user': 'UserController.createUser',
+
+  'PUT /user': 'UserController.editUser',
+
+  //****** User
+
+  // Messages
+
+  'POST /chatroom/:chatroomid/message': 'MessageController.createMessage'
 
 };
