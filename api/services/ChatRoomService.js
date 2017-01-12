@@ -11,6 +11,7 @@ module.exports = {
 
     let roomId = generateRoomId();
 
+    B.a('createRoom');
     return CassandraService.execute(createChatRoomQuery,
       [
         roomId, //room id
@@ -21,14 +22,17 @@ module.exports = {
       ]
       , true)
       .then(function () {
+        B.b('createRoom');
         return roomId;
       });
   },
 
   getChatRoomById: function (roomId, user) {
     const getChatRoomByIdQuery = 'SELECT * FROM chatrooms WHERE id = ?';
+    B.a('getChatRoomById');
     return CassandraService.execute(getChatRoomByIdQuery, [roomId], true)
       .then(function (chatRooms) {
+        B.b('getChatRoomById');
         let chatRoom = chatRooms[0];
         if (!chatRooms)
           throw ExceptionsHelper.ChatRoom.NotFound;
@@ -42,7 +46,12 @@ module.exports = {
 
   getUserChatRooms: function (user) {
     const getUserChatRoomsQuery = 'SELECT * FROM chatrooms WHERE ? IN participants'; //TODO
-    return CassandraService.execute(getUserChatRoomsQuery, [user.id], true);
+    B.a('getUserChatRooms');
+    return CassandraService.execute(getUserChatRoomsQuery, [user.id], true)
+      .then(function(rooms){
+        B.a('getUserChatRooms');
+        return rooms;
+      });
   },
 
   inviteIntoChatRoom: function (chatRoomId, user, userToInvite) {
@@ -86,12 +95,15 @@ module.exports = {
   updateLastMessage: function (chatRoomId, message) { //Consider using triggers
     const updateLastMessageQuery = "UPDATE chatrooms SET last_message = ? WHERE id = ?";
     message.id = message.id.toString();
-    console.log(message);
+    B.a('updateLastMessage');
     return CassandraService.execute(updateLastMessageQuery, [ //TODO: Handle error
         message,
         'f94fc926e3ac1cbd7bc13d44810b84599c4e11ee'//chatRoomId
       ],
-      true);
+      true).then(function(res){
+      B.b('updateLastMessage');
+      return res;
+    });
   }
 
 };

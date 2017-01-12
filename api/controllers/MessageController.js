@@ -5,6 +5,8 @@ module.exports = {
     // 2) Create message
     // 3) Update ChatRoom last message
 
+    B.a('MessageController.createMessage');
+
     if(!req.body.message)
       return res.status(400).send('req.body.message is required.');
 
@@ -28,6 +30,7 @@ module.exports = {
       })
       .then(function(){
         res.status(201).send('ok');
+        B.b('MessageController.createMessage');
       })
       .catch(ExceptionsHelper.shortCatch(res));
   },
