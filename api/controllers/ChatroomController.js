@@ -33,7 +33,7 @@ module.exports = {
       .then(function (chatRooms) {
         res.status(200).json(chatRooms);
       })
-      .catch(ExceptionService.shortCatch(res));
+      .catch(ExceptionsHelper.shortCatch(res));
   },
 
   getParticipants: function (req, res) {

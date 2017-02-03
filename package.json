@@ -37,5 +37,8 @@
     "url": "git://github.com/rparaschak/cass.git"
   },
   "author": "rparaschak",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "chance": "^1.0.4"
+  }
 }

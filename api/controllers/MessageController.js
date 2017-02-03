@@ -10,17 +10,21 @@ module.exports = {
     if(!req.body.message)
       return res.status(400).send('req.body.message is required.');
 
+    var message;
+
     ChatRoomService.getChatRoomById(req.param('chatroomid'), req.user)
       .then(function (chatRoom) {
         if(!chatRoom)
           throw ExceptionsHelper.ChatRoom.NotFound;
         if(!ChatRoomService.checkIfUserIsParticipant(chatRoom, req.user.id))
           throw ExceptionsHelper.ChatRoom.NotParticipant;
-        return MessageService.createMessage({
+        message = {
           user: req.user.id,
           message: req.body.message,
-          chatRoomId: req.param('chatroomid')
-        });
+          chatRoomId: req.param('chatroomid'),
+          createdAt: Date.now().toString()
+        };
+        return MessageService.createMessage(message);
       })
       .then(function(){
         return MessageService.getLastMessage(req.param('chatroomid'));
@@ -29,7 +33,7 @@ module.exports = {
         return ChatRoomService.updateLastMessage(req.param('chatroomid'), message);
       })
       .then(function(){
-        res.status(201).send('ok');
+        res.status(201).json(message);
         B.b('MessageController.createMessage');
       })
       .catch(ExceptionsHelper.shortCatch(res));

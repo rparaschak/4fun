@@ -54,9 +54,9 @@ module.exports.routes = {
 
   'POST /chatroom': 'ChatRoomController.createChatRoom',
 
-  'GET /chatrooom/:id': 'ChatRoomController.getChatRoom',
+  'GET /chatroom/:id': 'ChatRoomController.getChatRoom',
 
-  'GET /chatrooom': 'ChatRoomController.getChatRooms',
+  'GET /chatroom': 'ChatRoomController.getChatRooms',
 
   'POST /chatroom/:chatroomid/leave': 'ChatRoomController.leaveChatRoom',
 

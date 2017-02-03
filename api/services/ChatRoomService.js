@@ -45,7 +45,7 @@ module.exports = {
   },
 
   getUserChatRooms: function (user) {
-    const getUserChatRoomsQuery = 'SELECT * FROM chatrooms WHERE ? IN participants'; //TODO
+    const getUserChatRoomsQuery = 'SELECT * FROM chatrooms WHERE participants CONTAINS ?'; //TODO
     B.a('getUserChatRooms');
     return CassandraService.execute(getUserChatRoomsQuery, [user.id], true)
       .then(function(rooms){

@@ -1,14 +1,15 @@
 module.exports = {
 
   createMessage: function (message) {
-    const createMessageQuery = "INSERT INTO messages(id, chat_room_id, user, message) " +
-      "VALUES (now(), ?, ?, ?)"; //TODO: Investigate if it is possible to retrieve inserted document
+    const createMessageQuery = "INSERT INTO messages(id, chat_room_id, user, message, createdAt) " +
+      "VALUES (now(), ?, ?, ?, ?)"; //TODO: Investigate if it is possible to retrieve inserted document
     B.a('createMessage');
     return CassandraService.execute(createMessageQuery,
       [
         message.chatRoomId, //room id
         message.user,
-        message.message
+        message.message,
+        message.createdAt
       ]
       , true)
       .then(function(res){
